@@ -96,45 +96,45 @@ Logika avtomatskega režima je implementirana kot avtomat stanj v bloku `FB3 rez
 graph TD
     subgraph Legenda
         direction LR
-        A[Stanje] --> B(Dogodek/Pogoj za prehod);
-        C[/Akcija v stanju/];
-        D((Končno/Posebno stanje));
+        A[Stanje] --> B(Dogodek/Pogoj za prehod)
+        C[/Akcija v stanju/]
+        D((Končno/Posebno stanje))
     end
 
     subgraph Glavni Cikel
-        IDLE(0: IDLE / PRIPRAVLJEN) -- START & Pripravljen --> SP(10: POSTAVI PALETO);
-        SP -- Paleta OK --> SPP(20: POSTAVI POSODO NA P);
-        SPP -- Posoda OK & P na S2 --> PP_T(30: PREMAKNI P NA TEHTNICO \(S3\));
-        PP_T -- S3 Dosežen --> CALC(40: IZRAČUN KOLIČIN);
-        CALC -- Izračunano --> DA_T(50: PREMAKNI DOZ A NAD TEHTNICO \(S10\));
-        DA_T -- S10 Dosežen --> FILLA(60: POLNI A);
-        FILLA -- Masa A OK --> DA_H(70: PREMAKNI DOZ A DOMOV \(S9\));
-        DA_H -- S9 Dosežen --> DB_T(80: PREMAKNI DOZ B NAD TEHTNICO \(S12\));
-        DB_T -- S12 Dosežen --> FILLB(90: POLNI B);
-        FILLB -- Masa B OK --> DB_H(100: PREMAKNI DOZ B DOMOV \(S11\));
-        DB_H -- S11 Dosežen --> M_DOWN(110: PREMAKNI MEŠALO DOL \(S14\));
-        M_DOWN -- S14 Dosežen --> MIX(120: MEŠAJ);
-        MIX -- Čas Mešanja OK --> M_UP(130: PREMAKNI MEŠALO GOR \(S13\));
-        M_UP -- S13 Dosežen --> PP_TR(140: PREMAKNI P NA TRAK \(S4\));
-        PP_TR -- S4 Dosežen & Pripravljenost Traku --> P_H_TR(150: PREMAKNI P DOMOV \(S2\) & VKLOP TRAKU);
-        P_H_TR -- S2 Dosežen --> TR_S6(160: TRANSPORT DO S6);
-        TR_S6 -- S6 Dosežen --> VIB(170: VIBRIRAJ);
-        VIB -- S7 Dosežen & Čas Vibracij OK --> TR_S8(180: TRANSPORT DO S8);
-        TR_S8 -- S8 Dosežen --> CHK(190: PREVERI ŠTEVILO POSOD);
-        CHK -- Števec < 6 --> SPP;
-        CHK -- Števec = 6 --> FULL((200: PALETA POLNA));
-        FULL -- Odstrani Paleto --> IDLE;
+        IDLE(0: IDLE / PRIPRAVLJEN) -- START & Pripravljen --> SP(10: POSTAVI PALETO)
+        SP -- Paleta OK --> SPP(20: POSTAVI POSODO NA P)
+        SPP -- Posoda OK & P na S2 --> PP_T(30: PREMAKNI P NA TEHTNICO \(S3\))
+        PP_T -- S3 Dosežen --> CALC(40: IZRAČUN KOLIČIN)
+        CALC -- Izračunano --> DA_T(50: PREMAKNI DOZ A NAD TEHTNICO \(S10\))
+        DA_T -- S10 Dosežen --> FILLA(60: POLNI A)
+        FILLA -- Masa A OK --> DA_H(70: PREMAKNI DOZ A DOMOV \(S9\))
+        DA_H -- S9 Dosežen --> DB_T(80: PREMAKNI DOZ B NAD TEHTNICO \(S12\))
+        DB_T -- S12 Dosežen --> FILLB(90: POLNI B)
+        FILLB -- Masa B OK --> DB_H(100: PREMAKNI DOZ B DOMOV \(S11\))
+        DB_H -- S11 Dosežen --> M_DOWN(110: PREMAKNI MEŠALO DOL \(S14\))
+        M_DOWN -- S14 Dosežen --> MIX(120: MEŠAJ)
+        MIX -- Čas Mešanja OK --> M_UP(130: PREMAKNI MEŠALO GOR \(S13\))
+        M_UP -- S13 Dosežen --> PP_TR(140: PREMAKNI P NA TRAK \(S4\))
+        PP_TR -- S4 Dosežen & Pripravljenost Traku --> P_H_TR(150: PREMAKNI P DOMOV \(S2\) & VKLOP TRAKU)
+        P_H_TR -- S2 Dosežen --> TR_S6(160: TRANSPORT DO S6)
+        TR_S6 -- S6 Dosežen --> VIB(170: VIBRIRAJ)
+        VIB -- S7 Dosežen & Čas Vibracij OK --> TR_S8(180: TRANSPORT DO S8)
+        TR_S8 -- S8 Dosežen --> CHK(190: PREVERI ŠTEVILO POSOD)
+        CHK -- Števec < 6 --> SPP
+        CHK -- Števec = 6 --> FULL((200: PALETA POLNA))
+        FULL -- Odstrani Paleto --> IDLE
     end
 
     subgraph Prekinitve in Napake
-        AktivnaStanja -- STOP (Dokončaj) --> CHK_STOP(195: Končaj Posodo Po STOP);
-        CHK_STOP --> STOPPED;
-        AktivnaStanja -- STOP (Takoj) --> STOPPED((998: USTAVLJEN \(Ročni\)));
-        AktivnaStanja -- NAPAKA (error_word != 0) --> ERROR((999: NAPAKA));
-        VsaStanja -- ZASILNI IZKLOP / Gl. Stikalo OFF --> E_STOPPED((Stanje E-STOP));
-        STOPPED -- Reset / Nova Izbira --> IDLE;
-        ERROR -- Reset --> IDLE;
-        E_STOPPED -- Sprostitev E-STOP & Gl. Stikalo ON & Reset --> IDLE;
+        AktivnaStanja -- STOP (Dokončaj) --> CHK_STOP(195: Končaj Posodo Po STOP)
+        CHK_STOP --> STOPPED
+        AktivnaStanja -- STOP (Takoj) --> STOPPED((998: USTAVLJEN \(Ročni\)))
+        AktivnaStanja -- NAPAKA (error_word != 0) --> ERROR((999: NAPAKA))
+        VsaStanja -- ZASILNI IZKLOP / Gl. Stikalo OFF --> E_STOPPED((Stanje E-STOP))
+        STOPPED -- Reset / Nova Izbira --> IDLE
+        ERROR -- Reset --> IDLE
+        E_STOPPED -- Sprostitev E-STOP & Gl. Stikalo ON & Reset --> IDLE
     end
 
     %% Opombe o stilih (ostanejo enake, prilagodite po želji)
@@ -147,22 +147,22 @@ graph TD
 
     %% Povezave iz skupin stanj (za jasnost sem jih preimenoval)
     linkStyle default interpolate basis
-    FILLA --> AktivnaStanja;
-    FILLB --> AktivnaStanja;
-    MIX --> AktivnaStanja;
-    VIB --> AktivnaStanja;
-    TR_S6 --> AktivnaStanja;
-    TR_S8 --> AktivnaStanja;
-    % ... ostala aktivna stanja ... --> AktivnaStanja;
+    FILLA --> AktivnaStanja
+    FILLB --> AktivnaStanja
+    MIX --> AktivnaStanja
+    VIB --> AktivnaStanja
+    TR_S6 --> AktivnaStanja
+    TR_S8 --> AktivnaStanja
+    % ... ostala aktivna stanja ... --> AktivnaStanja
 
-    IDLE --> VsaStanja;
-    SP --> VsaStanja;
-    % ... vsa stanja ... --> VsaStanja;
-    FULL --> VsaStanja;
-    STOPPED --> VsaStanja;
-    ERROR --> VsaStanja;
-    E_STOPPED --> VsaStanja;
+    IDLE --> VsaStanja
+    SP --> VsaStanja
+    % ... vsa stanja ... --> VsaStanja
+    FULL --> VsaStanja
+    STOPPED --> VsaStanja
+    ERROR --> VsaStanja
+    E_STOPPED --> VsaStanja
 
-    style AktivnaStanja stroke-width:0px, fill:none, color:none; % Naredi vozlišče nevidno
-    style VsaStanja stroke-width:0px, fill:none, color:none;     % Naredi vozlišče nevidno
+    style AktivnaStanja stroke-width:0px, fill:none, color:none    %% Naredi vozlišče nevidno
+    style VsaStanja stroke-width:0px, fill:none, color:none        %% Naredi vozlišče nevidno
 ```
