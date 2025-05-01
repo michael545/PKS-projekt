@@ -165,4 +165,4 @@ graph TD
 
     style AktivnaStanja stroke-width:0px, fill:none, color:none    %% Naredi vozlišče nevidno
     style VsaStanja stroke-width:0px, fill:none, color:none        %% Naredi vozlišče nevidno
-```
+```mermaid
