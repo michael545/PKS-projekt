@@ -2,7 +2,7 @@
 
 ## Opis Projekta
 
-Ta repozitorij vsebuje projekt za Siemens TIA Portal, razvit kot del projektne naloge pri predmetu PKS (Procesni Krmilni Sistemi). Namen projekta je avtomatizacija in vodenje polnilne linije za pripravo gradbene mase in polnjenje le-te v posode. Projekt vključuje krmilni program za PLC Siemens S7-1200 in uporabniški vmesnik za HMI panel TP700 Comfort.
+Ta repozitorij vsebuje projekt za Siemens TIA Portal, razvit kot del projektne naloge pri predmetu PKS (Progralmirljivi Krmilni Sistemi). Namen projekta je avtomatizacija in vodenje polnilne linije za pripravo gradbene mase in polnjenje le-te v posode. Projekt vključuje krmilni program za PLC Siemens S7-1200 in uporabniški vmesnik za HMI panel TP700 Comfort.
 
 Tehnološki postopek zajema naslednje korake:
 1.  Postavitev prazne palete na konec linije.
