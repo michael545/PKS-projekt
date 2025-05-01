@@ -88,9 +88,9 @@ Krmilni program omogoča dva načina delovanja:
 * Prikaz stanja cikla, števca posod, skupnega časa, odstopanj volumna (`ABSE`), doseženega razmerja (`mr_AB_dej`), prelitega volumna (`V_polit`) in napak.
 * Možnost vnosa `V_žel` in `mr_AB_žel`.
 
-## Avtomat Stanja (Avtomatski Režim)
+## Diagram Stanj (Avtomatski Režim)
 
-Logika avtomatskega režima je implementirana kot avtomat stanj v bloku `FB3 rezim_avtomatsko`. Stanja predstavljajo posamezne korake tehnološkega procesa.
+Logika avtomatskega režima je implementirana kot sekvenčni stroj v bloku `FB3 rezim_avtomatsko`. Stanja predstavljajo posamezne korake tehnološkega procesa.
 
 ```mermaid
 graph TD
