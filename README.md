@@ -139,7 +139,6 @@ graph TD
 
     %% Opombe o stilih (ostanejo enake, prilagodite po želji)
     style IDLE fill:#f9f,stroke:#333,stroke-width:2px
-    % ... (ostale definicije stilov) ...
     style FULL fill:#f9f,stroke:#333,stroke-width:2px
     style STOPPED fill:#f99,stroke:#333,stroke-width:2px
     style ERROR fill:#f00,stroke:#333,stroke-width:2px
@@ -153,16 +152,14 @@ graph TD
     VIB --> AktivnaStanja
     TR_S6 --> AktivnaStanja
     TR_S8 --> AktivnaStanja
-    % ... ostala aktivna stanja ... --> AktivnaStanja
 
     IDLE --> VsaStanja
     SP --> VsaStanja
-    % ... vsa stanja ... --> VsaStanja
     FULL --> VsaStanja
     STOPPED --> VsaStanja
     ERROR --> VsaStanja
     E_STOPPED --> VsaStanja
 
-    style AktivnaStanja stroke-width:0px, fill:none, color:none    %% Naredi vozlišče nevidno
-    style VsaStanja stroke-width:0px, fill:none, color:none        %% Naredi vozlišče nevidno
-```mermaid
+    style AktivnaStanja stroke-width:0px, fill:none, color:none
+    style VsaStanja stroke-width:0px, fill:none, color:none
+```
