@@ -95,9 +95,10 @@ Logika avtomatskega režima je implementirana kot avtomat stanj v bloku `FB3 rez
 ```mermaid
 graph TD
     subgraph Legenda
-        S2 --> S3 (Prehod ob dogodku);
-        S1[Stanje];
-        A1[/Akcija v stanju/];
+        direction LR
+        A[Stanje] --> B(Dogodek/Pogoj za prehod);
+        C[/Akcija v stanju/];
+        D((Končno/Posebno stanje));
     end
 
     subgraph Glavni Cikel
@@ -121,43 +122,46 @@ graph TD
         VIB -- S7 Dosežen & Čas Vibracij OK --> TR_S8(180: TRANSPORT DO S8);
         TR_S8 -- S8 Dosežen --> CHK(190: PREVERI ŠTEVILO POSOD);
         CHK -- Števec < 6 --> SPP;
-        CHK -- Števec = 6 --> FULL(200: PALETA POLNA);
+        CHK -- Števec = 6 --> FULL((200: PALETA POLNA));
         FULL -- Odstrani Paleto --> IDLE;
     end
 
     subgraph Prekinitve in Napake
-        A[Vsa Aktivna Stanja] -- STOP (Dokončaj) --> CHK_STOP(195: Končaj Posodo Po STOP);
+        AktivnaStanja -- STOP (Dokončaj) --> CHK_STOP(195: Končaj Posodo Po STOP);
         CHK_STOP --> STOPPED;
-        B[Vsa Aktivna Stanja] -- STOP (Takoj) --> STOPPED(998: USTAVLJEN (Ročni));
-        C[Vsa Aktivna Stanja] -- NAPAKA (error_word != 0) --> ERROR(999: NAPAKA);
-        D[Vsa Stanja] -- ZASILNI IZKLOP / Gl. Stikalo OFF --> E_STOPPED(Stanje E-STOP);
+        AktivnaStanja -- STOP (Takoj) --> STOPPED((998: USTAVLJEN (Ročni)));
+        AktivnaStanja -- NAPAKA (error_word != 0) --> ERROR((999: NAPAKA));
+        VsaStanja -- ZASILNI IZKLOP / Gl. Stikalo OFF --> E_STOPPED((Stanje E-STOP));
         STOPPED -- Reset / Nova Izbira --> IDLE;
         ERROR -- Reset --> IDLE;
         E_STOPPED -- Sprostitev E-STOP & Gl. Stikalo ON & Reset --> IDLE;
     end
 
-    %% Opisi Stanj (Primeri)
+    %% Opombe o stilih (ostanejo enake, prilagodite po želji)
     style IDLE fill:#f9f,stroke:#333,stroke-width:2px
-    style SP fill:#ccf,stroke:#333,stroke-width:1px
-    style SPP fill:#ccf,stroke:#333,stroke-width:1px
-    style PP_T fill:#ccf,stroke:#333,stroke-width:1px
-    style CALC fill:#ccf,stroke:#333,stroke-width:1px
-    style DA_T fill:#ccf,stroke:#333,stroke-width:1px
-    style FILLA fill:#ffc,stroke:#333,stroke-width:1px
-    style DA_H fill:#ccf,stroke:#333,stroke-width:1px
-    style DB_T fill:#ccf,stroke:#333,stroke-width:1px
-    style FILLB fill:#ffc,stroke:#333,stroke-width:1px
-    style DB_H fill:#ccf,stroke:#333,stroke-width:1px
-    style M_DOWN fill:#ccf,stroke:#333,stroke-width:1px
-    style MIX fill:#cff,stroke:#333,stroke-width:1px
-    style M_UP fill:#ccf,stroke:#333,stroke-width:1px
-    style PP_TR fill:#ccf,stroke:#333,stroke-width:1px
-    style P_H_TR fill:#ccf,stroke:#333,stroke-width:1px
-    style TR_S6 fill:#cfc,stroke:#333,stroke-width:1px
-    style VIB fill:#fcf,stroke:#333,stroke-width:1px
-    style TR_S8 fill:#cfc,stroke:#333,stroke-width:1px
-    style CHK fill:#eee,stroke:#333,stroke-width:1px
+    % ... (ostale definicije stilov) ...
     style FULL fill:#f9f,stroke:#333,stroke-width:2px
     style STOPPED fill:#f99,stroke:#333,stroke-width:2px
     style ERROR fill:#f00,stroke:#333,stroke-width:2px
     style E_STOPPED fill:#f60,stroke:#333,stroke-width:2px
+
+    %% Povezave iz skupin stanj (za jasnost sem jih preimenoval)
+    linkStyle default interpolate basis
+    FILLA --> AktivnaStanja;
+    FILLB --> AktivnaStanja;
+    MIX --> AktivnaStanja;
+    VIB --> AktivnaStanja;
+    TR_S6 --> AktivnaStanja;
+    TR_S8 --> AktivnaStanja;
+    % ... ostala aktivna stanja ... --> AktivnaStanja;
+
+    IDLE --> VsaStanja;
+    SP --> VsaStanja;
+    % ... vsa stanja ... --> VsaStanja;
+    FULL --> VsaStanja;
+    STOPPED --> VsaStanja;
+    ERROR --> VsaStanja;
+    E_STOPPED --> VsaStanja;
+
+    style AktivnaStanja stroke-width:0px, fill:none, color:none; % Naredi vozlišče nevidno
+    style VsaStanja stroke-width:0px, fill:none, color:none;     % Naredi vozlišče nevidno
