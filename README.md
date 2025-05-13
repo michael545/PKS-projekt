@@ -163,4 +163,4 @@ graph TD
     style AktivnaStanja stroke-width:0px, fill:none, color:none
     style VsaStanja stroke-width:0px, fill:none, color:none
 ```
-![HMI LAYOUT](/HMI_SIAMTIC_TP700.pngmple.png "HMI prototip")
+![HMI LAYOUT](HMI_SIAMTIC_TP700.png "HMI prototip")
