@@ -100,7 +100,7 @@ graph TD
         D((Končno/Posebno stanje))
     end
 
-    subgraph "Glavni Cikel Avtomatskega Režima (po rezim_avtomatsko.txt)" // <-- QUOTES ADDED HERE
+    subgraph "Glavni Cikel Avtomatskega Režima (po rezim_avtomatsko.txt)"
         S0["0: IDLE / Pripravljen"] -- "START pritisnjen" --> S10["10: Zahteva Dodaj Paleto"]
         S10 -- "Interni prehod" --> S15["15: Čakaj Potrditev Palete (OB30)"]
         S15 -- "Paleta Potrjena (Ack)" --> S20["20: Zahteva Postavi Posodo"]
@@ -126,8 +126,8 @@ graph TD
         S155 -- "Zahteva 'Odstrani Paleto' (Ack iz OB30)" --> S0
     end
 
-    subgraph "Prekinitve in Napake (po rezim_avtomatsko.txt in splošni logiki)" // <-- QUOTES ADDED HERE
-        VsaAktivnaStanja["(Stanja S10-S155)"] // <-- Node labels with parens are fine if quoted
+    subgraph "Prekinitve in Napake (po rezim_avtomatsko.txt in splošni logiki)"
+        VsaAktivnaStanja["Vsa Aktivna Stanja (Stanja S10-S155)"]
 
         S0 -- "STOP pritisnjen" --> S998
         VsaAktivnaStanja -- "STOP pritisnjen (takojšen prehod v 998, če ni v 'dokončaj sekvenco')" --> S998
@@ -135,10 +135,10 @@ graph TD
 
         S998["998: USTAVLJEN / Preklop na Ročni Režim"] -- "Interni prehod" --> S0
 
-        SistemskaStanja["(Vsa Stanja Cikla S0-S155, S998)"] // <-- Node labels with parens are fine if quoted
-        SistemskaStanja -- "NAPAKA (error_word aktiven)" --> StanjeNapake["Stanje NAPAKE (zahteva Reset)"] // <-- Node labels with parens are fine if quoted
+        SistemskaStanja["Sistemska Stanja (Vsa Stanja Cikla S0-S155, S998)"]
+        SistemskaStanja -- "NAPAKA (error_word aktiven)" --> StanjeNapake["Stanje NAPAKE (zahteva Reset)"]
         StanjeNapake -- "Reset" --> S0
-        SistemskaStanja -- "ZASILNI IZKLOP / Glavno Stikalo IZKLOP" --> StanjeZasilniIzklop["Stanje ZASILNI IZKLOP (Ročni ob ponovnem zagonu)"] // <-- Node labels with parens are fine if quoted
+        SistemskaStanja -- "ZASILNI IZKLOP / Glavno Stikalo IZKLOP" --> StanjeZasilniIzklop["Stanje ZASILNI IZKLOP (Ročni ob ponovnem zagonu)"]
         StanjeZasilniIzklop -- "Sprostitev & Reset" --> S0
     end
 
