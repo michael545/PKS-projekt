@@ -100,7 +100,7 @@ graph TD
         D((Končno/Posebno stanje))
     end
 
-    subgraph Glavni Cikel Avtomatskega Režima (po rezim_avtomatsko.txt)
+    subgraph "Glavni Cikel Avtomatskega Režima (po rezim_avtomatsko.txt)" // <-- QUOTES ADDED HERE
         S0["0: IDLE / Pripravljen"] -- "START pritisnjen" --> S10["10: Zahteva Dodaj Paleto"]
         S10 -- "Interni prehod" --> S15["15: Čakaj Potrditev Palete (OB30)"]
         S15 -- "Paleta Potrjena (Ack)" --> S20["20: Zahteva Postavi Posodo"]
@@ -124,25 +124,21 @@ graph TD
         S150 -- "#Posod < 6" --> S20
         S150 -- "#Posod = 6" --> S155["155: Paleta Polna, Čakaj Zahtevo 'Odstrani Paleto'"]
         S155 -- "Zahteva 'Odstrani Paleto' (Ack iz OB30)" --> S0
-
     end
 
-    subgraph Prekinitve in Napake (po rezim_avtomatsko.txt in splošni logiki)
-        %% 'VsaAktivnaStanja' je konceptualna skupina stanj od S10 do S150/S155
-        VsaAktivnaStanja["(Stanja S10-S155)"]
+    subgraph "Prekinitve in Napake (po rezim_avtomatsko.txt in splošni logiki)" // <-- QUOTES ADDED HERE
+        VsaAktivnaStanja["(Stanja S10-S155)"] // <-- Node labels with parens are fine if quoted
 
         S0 -- "STOP pritisnjen" --> S998
         VsaAktivnaStanja -- "STOP pritisnjen (takojšen prehod v 998, če ni v 'dokončaj sekvenco')" --> S998
         VsaAktivnaStanja -- "STOP pritisnjen (sproži DokončajSekvencoFlag, če 20<=STANJE<=155, normalno nadaljevanje dokler StopTipkaFlag ne povzroči prehoda v S998)" --> VsaAktivnaStanja
-        %% Zgornja tranzicija kaže, da 'DokončajSekvencoFlag' ne preusmeri toka takoj, ampak pusti, da S998 ujame kasneje
 
         S998["998: USTAVLJEN / Preklop na Ročni Režim"] -- "Interni prehod" --> S0
 
-        %% Sistemske prekinitve, ki vplivajo na FB IZBERI_REZIM in posledično na ta FB
-        SistemskaStanja["(Vsa Stanja Cikla S0-S155, S998)"]
-        SistemskaStanja -- "NAPAKA (error_word aktiven)" --> StanjeNapake["Stanje NAPAKE (zahteva Reset)"]
+        SistemskaStanja["(Vsa Stanja Cikla S0-S155, S998)"] // <-- Node labels with parens are fine if quoted
+        SistemskaStanja -- "NAPAKA (error_word aktiven)" --> StanjeNapake["Stanje NAPAKE (zahteva Reset)"] // <-- Node labels with parens are fine if quoted
         StanjeNapake -- "Reset" --> S0
-        SistemskaStanja -- "ZASILNI IZKLOP / Glavno Stikalo IZKLOP" --> StanjeZasilniIzklop["Stanje ZASILNI IZKLOP (Ročni ob ponovnem zagonu)"]
+        SistemskaStanja -- "ZASILNI IZKLOP / Glavno Stikalo IZKLOP" --> StanjeZasilniIzklop["Stanje ZASILNI IZKLOP (Ročni ob ponovnem zagonu)"] // <-- Node labels with parens are fine if quoted
         StanjeZasilniIzklop -- "Sprostitev & Reset" --> S0
     end
 
@@ -153,13 +149,8 @@ graph TD
     style StanjeNapake fill:#ff9999,stroke:#333,stroke-width:2px
     style StanjeZasilniIzklop fill:#ffcc99,stroke:#333,stroke-width:2px
     
-    %% Skrij pomožne bloke za grupiranje, če niso eksplicitno narisani kot prehodi
     style VsaAktivnaStanja stroke-width:0px, fill:none, color:none
     style SistemskaStanja stroke-width:0px, fill:none, color:none
-
-    %% Povezovanje za STOP in Napake
-    %% (Težko je eksplicitno povezati vsa stanja, zato je uporabljen blok 'VsaAktivnaStanja')
-    %% Dejanska preverjanja za STOP so znotraj ali na koncu mnogih stanj v kodi.
 ```
 
 ![HMI LAYOUT AVTOMATSKI REZIM](HMI_avtomatsko.png "HMI prototip")
