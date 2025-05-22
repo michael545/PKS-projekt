@@ -91,7 +91,6 @@ Krmilni program omogoča dva načina delovanja:
 ## Diagram Stanj (Avtomatski Režim)
 
 Logika avtomatskega režima je implementirana kot sekvenčni stroj v bloku `FB3 rezim_avtomatsko`. Stanja predstavljajo posamezne korake tehnološkega procesa.
-
 ```mermaid
 graph TD
     subgraph Legenda
@@ -101,66 +100,67 @@ graph TD
         D((Končno/Posebno stanje))
     end
 
-    subgraph Glavni Cikel
-        IDLE["0: IDLE / PRIPRAVLJEN"] -- "START & Pripravljen" --> SP["10: POSTAVI PALETO"]
-        SP -- "Paleta OK" --> SPP["20: POSTAVI POSODO NA P"]
-        SPP -- "Posoda OK & P na S2" --> PP_T["30: PREMAKNI P NA TEHTNICO (S3)"]
-        PP_T -- "S3 Dosežen" --> CALC["40: IZRAČUN KOLIČIN"]
-        CALC -- "Izračunano" --> DA_T["50: PREMAKNI DOZ A NAD TEHTNICO (S10)"]
-        DA_T -- "S10 Dosežen" --> FILLA["60: POLNI A"]
-        FILLA -- "Masa A OK" --> DA_H["70: PREMAKNI DOZ A DOMOV (S9)"]
-        DA_H -- "S9 Dosežen" --> DB_T["80: PREMAKNI DOZ B NAD TEHTNICO (S12)"]
-        DB_T -- "S12 Dosežen" --> FILLB["90: POLNI B"]
-        FILLB -- "Masa B OK" --> DB_H["100: PREMAKNI DOZ B DOMOV (S11)"]
-        DB_H -- "S11 Dosežen" --> M_DOWN["110: PREMAKNI MEŠALO DOL (S14)"]
-        M_DOWN -- "S14 Dosežen" --> MIX["120: MEŠAJ"]
-        MIX -- "Čas Mešanja OK" --> M_UP["130: PREMAKNI MEŠALO GOR (S13)"]
-        M_UP -- "S13 Dosežen" --> PP_TR["140: PREMAKNI P NA TRAK (S4)"]
-        PP_TR -- "S4 Dosežen & Pripravljenost Traku" --> P_H_TR["150: PREMAKNI P DOMOV (S2) & VKLOP TRAKU"]
-        P_H_TR -- "S2 Dosežen" --> TR_S6["160: TRANSPORT DO S6"]
-        TR_S6 -- "S6 Dosežen" --> VIB["170: VIBRIRAJ"]
-        VIB -- "S7 Dosežen & Čas Vibracij OK" --> TR_S8["180: TRANSPORT DO S8"]
-        TR_S8 -- "S8 Dosežen" --> CHK["190: PREVERI ŠTEVILO POSOD"]
-        CHK -- "Števec < 6" --> SPP
-        CHK -- "Števec = 6" --> FULL[("200: PALETA POLNA")]
-        FULL -- "Odstrani Paleto" --> IDLE
+    subgraph Glavni Cikel Avtomatskega Režima (po rezim_avtomatsko.txt)
+        S0["0: IDLE / Pripravljen"] -- "START pritisnjen" --> S10["10: Zahteva Dodaj Paleto"]
+        S10 -- "Interni prehod" --> S15["15: Čakaj Potrditev Palete (OB30)"]
+        S15 -- "Paleta Potrjena (Ack)" --> S20["20: Zahteva Postavi Posodo"]
+        S20 -- "Interni prehod" --> S25["25: Čakaj Potrditev Posode (OB30)"]
+        S25 -- "Posoda Potrjena (Ack)" --> S30["30: Premakni P na Tehtnico (do S3)"]
+        S30 -- "P na Tehtnici (S3)" --> S40["40: Izračun Količin A in B"]
+        S40 -- "Količine Izračunane" --> S45["45: Premakni Doz A na Poln. Mesto (do S10)"]
+        S45 -- "Doz A na Poln. Mestu (S10)" --> S50["50: Polni Komponento A (časovno)"]
+        S50 -- "Čas Polnjenja A Potekel" --> S55["55: Zapri Ventil A"]
+        S55 -- "Ventil A Zaprt (0 deg)" --> S60["60: Premakni Doz A Domov (do S9)"]
+        S60 -- "Doz A Doma (S9)" --> S65["65: Premakni Doz B na Poln. Mesto (do S12)"]
+        S65 -- "Doz B na Poln. Mestu (S12)" --> S70["70: Polni Komponento B (do ciljne mase)"]
+        S70 -- "Ciljna Masa B Dosežena & Ventil B Izklopljen" --> S80["80: Premakni Doz B Domov (do S11)"]
+        S80 -- "Doz B Doma (S11)" --> S90["90: Spusti Mešalo (do S14)"]
+        S90 -- "Mešalo Spuščeno (S14)" --> S100["100: Mešaj (časovno)"]
+        S100 -- "Čas Mešanja Potekel & Motor Mešala Izklopljen" --> S110["110: Dvigni Mešalo (do S13)"]
+        S110 -- "Mešalo Dvignjeno (S13)" --> S120["120: Premakni P (s posodo) na Trak (do S4)"]
+        S120 -- "P na Začetku Traku (S4)" --> S130["130: Vklop Traku, Premakni P Domov (do S2), Kontrola Vibro (S6-S7)"]
+        S130 -- "Posoda na Koncu Traku (S8) & P Doma (S2)" --> S140["140: Odlaganje na Paleto (kratka pavza), Izklop Traku, Povečaj Števec Posod"]
+        S140 -- "Končano Odlaganje" --> S150["150: Preveri Ali je Paleta Polna"]
+        S150 -- "#Posod < 6" --> S20
+        S150 -- "#Posod = 6" --> S155["155: Paleta Polna, Čakaj Zahtevo 'Odstrani Paleto'"]
+        S155 -- "Zahteva 'Odstrani Paleto' (Ack iz OB30)" --> S0
+
     end
 
-    subgraph Prekinitve in Napake
-        AktivnaStanja -- "STOP (Dokončaj)" --> CHK_STOP["195: Končaj Posodo Po STOP"]
-        CHK_STOP --> STOPPED[("998: USTAVLJEN (Ročni)")]
-        AktivnaStanja -- "STOP (Takoj)" --> STOPPED
-        AktivnaStanja -- "NAPAKA (error_word != 0)" --> ERROR[("999: NAPAKA")]
-        VsaStanja -- "ZASILNI IZKLOP / Gl. Stikalo OFF" --> E_STOPPED[("Stanje E-STOP")]
-        STOPPED -- "Reset / Nova Izbira" --> IDLE
-        ERROR -- "Reset" --> IDLE
-        E_STOPPED -- "Sprostitev E-STOP & Gl. Stikalo ON & Reset" --> IDLE
+    subgraph Prekinitve in Napake (po rezim_avtomatsko.txt in splošni logiki)
+        %% 'VsaAktivnaStanja' je konceptualna skupina stanj od S10 do S150/S155
+        VsaAktivnaStanja["(Stanja S10-S155)"]
+
+        S0 -- "STOP pritisnjen" --> S998
+        VsaAktivnaStanja -- "STOP pritisnjen (takojšen prehod v 998, če ni v 'dokončaj sekvenco')" --> S998
+        VsaAktivnaStanja -- "STOP pritisnjen (sproži DokončajSekvencoFlag, če 20<=STANJE<=155, normalno nadaljevanje dokler StopTipkaFlag ne povzroči prehoda v S998)" --> VsaAktivnaStanja
+        %% Zgornja tranzicija kaže, da 'DokončajSekvencoFlag' ne preusmeri toka takoj, ampak pusti, da S998 ujame kasneje
+
+        S998["998: USTAVLJEN / Preklop na Ročni Režim"] -- "Interni prehod" --> S0
+
+        %% Sistemske prekinitve, ki vplivajo na FB IZBERI_REZIM in posledično na ta FB
+        SistemskaStanja["(Vsa Stanja Cikla S0-S155, S998)"]
+        SistemskaStanja -- "NAPAKA (error_word aktiven)" --> StanjeNapake["Stanje NAPAKE (zahteva Reset)"]
+        StanjeNapake -- "Reset" --> S0
+        SistemskaStanja -- "ZASILNI IZKLOP / Glavno Stikalo IZKLOP" --> StanjeZasilniIzklop["Stanje ZASILNI IZKLOP (Ročni ob ponovnem zagonu)"]
+        StanjeZasilniIzklop -- "Sprostitev & Reset" --> S0
     end
 
-    %% Opombe o stilih (ostanejo enake, prilagodite po želji)
-    style IDLE fill:#f9f,stroke:#333,stroke-width:2px
-    style FULL fill:#f9f,stroke:#333,stroke-width:2px
-    style STOPPED fill:#f99,stroke:#333,stroke-width:2px
-    style ERROR fill:#f00,stroke:#333,stroke-width:2px
-    style E_STOPPED fill:#f60,stroke:#333,stroke-width:2px
+    %% Stili (lahko jih prilagodite)
+    style S0 fill:#ccffcc,stroke:#333,stroke-width:2px
+    style S155 fill:#ccffcc,stroke:#333,stroke-width:2px
+    style S998 fill:#ffcccc,stroke:#333,stroke-width:2px
+    style StanjeNapake fill:#ff9999,stroke:#333,stroke-width:2px
+    style StanjeZasilniIzklop fill:#ffcc99,stroke:#333,stroke-width:2px
+    
+    %% Skrij pomožne bloke za grupiranje, če niso eksplicitno narisani kot prehodi
+    style VsaAktivnaStanja stroke-width:0px, fill:none, color:none
+    style SistemskaStanja stroke-width:0px, fill:none, color:none
 
-    %% Povezave iz skupin stanj (za jasnost sem jih preimenoval)
-    linkStyle default interpolate basis
-    FILLA --> AktivnaStanja
-    FILLB --> AktivnaStanja
-    MIX --> AktivnaStanja
-    VIB --> AktivnaStanja
-    TR_S6 --> AktivnaStanja
-    TR_S8 --> AktivnaStanja
-
-    IDLE --> VsaStanja
-    SP --> VsaStanja
-    FULL --> VsaStanja
-    STOPPED --> VsaStanja
-    ERROR --> VsaStanja
-    E_STOPPED --> VsaStanja
-
-    style AktivnaStanja stroke-width:0px, fill:none, color:none
-    style VsaStanja stroke-width:0px, fill:none, color:none
+    %% Povezovanje za STOP in Napake
+    %% (Težko je eksplicitno povezati vsa stanja, zato je uporabljen blok 'VsaAktivnaStanja')
+    %% Dejanska preverjanja za STOP so znotraj ali na koncu mnogih stanj v kodi.
 ```
-![HMI LAYOUT](HMI_SIAMTIC_TP700.png "HMI prototip")
+
+![HMI LAYOUT AVTOMATSKI REZIM](HMI_avtomatsko.png "HMI prototip")
+![HMI LAYOUT AVTOMATSKI REZIM](HMI_rocno.png "HMI prototip")
