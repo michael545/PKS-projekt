@@ -12,11 +12,11 @@ Da bi dosegli visoko natančnost in ponovljivost doziranja komponente A ter hkra
 
 2.  **Modeliranje posameznih faz pretoka:**
     * Na podlagi zbranih podatkov smo analizirali in modelirali različne faze pretoka skozi ventil:
-        * **Faza odpiranja in ustaljenega pretoka:** Opisuje, kako se masa naraščene tekočine spreminja od trenutka, ko je ventil dobil ukaz za odprtje, preko mrtvega časa odpiranja, do morebitne ustaljene faze pretoka (ko je dm/dt = const). Za to fazo smo uporabili polinomsko regresijo (spline 2. reda) za opis odvisnosti mase od časa $m_{odpiranja}(t)$. Grafični prikaz takšne regresije bi bil viden na sliki z naslovom, podobnim `Regresija_za_posamezne_faze_-_Dataset_1_(Nominal).png`.
+        * **Faza odpiranja in ustaljenega pretoka:** Opisuje, kako se masa naraščene tekočine spreminja od trenutka, ko je ventil dobil ukaz za odprtje, preko mrtvega časa odpiranja, do morebitne ustaljene faze pretoka (ko je dm/dt = const). Za to fazo smo uporabili polinomsko regresijo (spline 2. reda) za opis odvisnosti mase od časa $m_{odpiranja}(t)$. Grafični prikaz te regresije sliki z naslovom, podobnim `Regresija_za_posamezne_faze_-_Dataset_1_(Nominal).png`.
         * **Faza zapiranja (vpliv mrtvega časa):** Opisuje dodatno količino (maso) tekočine, ki še steče skozi ventil potem, ko je bil dan ukaz za zaprtje. Ta "delta masa" ($\Delta m_{zapiranja}$) je ključna za kompenzacijo prekoračitve. Tudi ta del karakteristike smo modelirali, s spline regresijo, ki opisuje to dodatno maso.
 
 3.  **Simulacija skupne pretočene mase:**
-    * Z združitvijo modela faze odpiranja in modela delta mase med zapiranjem smo lahko simulirali skupno pretočeno maso za poljubno (ukazano) trajanje odprtosti ventila: $M_{skupna}(t_{ukaz}) = m_{odpiranja}(t_{ukaz}) + \Delta m_{zapiranja}$. Rezultati takšne simulacije so prikazani na grafu, `Simulirane_komponente_mase_-_Dataset_1_(Nominal).png`.
+    * Z združitvijo modela faze odpiranja in modela delta mase med zapiranjem smo lahko simulirali skupno pretočeno maso za poljubno (ukazano) trajanje odprtosti ventila: $M_{skupna}(t_{ukaz}) = m_{odpiranja}(t_{ukaz}) + \Delta m_{zapiranja}$. Rezultati te simulacije so prikazani na grafu, `Simulirane_komponente_mase_-_Dataset_1_(Nominal).png`.
 
 4.  **Izpeljava inverzne karakteristike (Čas iz Mase):**
     * **Ključni korak** je bil izpeljava inverznega modela, ki nam iz *želene ciljne mase* komponente A ($M_{ciljna}$) izračuna *potrebno trajanje ukaza za odprtje ventila* ($t_{ukaz} = f(M_{ciljna})$).
